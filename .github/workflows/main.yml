@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI Pipeline PHP
 
 on:
   push:
@@ -12,31 +12,36 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout código
+      - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Configurar Python
-        uses: actions/setup-python@v3
+      - name: Instalar PHP
+        uses: shivammathur/setup-php@v2
         with:
-          python-version: "3.9"
+          php-version: "8.1"
+          tools: composer
 
       - name: Instalar dependências
-        run: pip install -r requirements.txt || true
+        run: composer install
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout código
+      - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Configurar Python
-        uses: actions/setup-python@v3
+      - name: Instalar PHP
+        uses: shivammathur/setup-php@v2
         with:
-          python-version: "3.9"
+          php-version: "8.1"
+          tools: composer
+
+      - name: Instalar dependências
+        run: composer install
 
       - name: Executar testes
-        run: python -m unittest discover
+        run: vendor/bin/phpunit tests/SaudacaoTest.php
 
   deploy:
     needs: test
