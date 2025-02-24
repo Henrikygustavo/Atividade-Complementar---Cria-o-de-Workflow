@@ -1,4 +1,4 @@
-name: CI/CD TaskManager
+name: CI Pipeline PHP
 
 on:
   push:
@@ -9,38 +9,36 @@ on:
       - main
 
 jobs:
-  test:
-    name: Run PHPUnit Tests
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Set up PHP
+      - name: Instalar PHP e Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
-          tools: composer, phpunit
+          php-version: "8.1"
+          tools: composer
 
-      - name: Install Dependencies
-        run: composer install --no-progress --no-suggest
+      - name: Instalar dependências
+        run: composer install
 
-      - name: Run Tests
-        run: vendor/bin/phpunit --testdox
-
-  deploy:
-    name: Deploy to Production
-    needs: test
+  test:
+    needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Deploy Application
-        run: |
-          echo "Iniciando o deploy..."
-          mkdir -p ~/deploy/taskmanager
-          cp -r src ~/deploy/taskmanager/
-          echo "Deploy concluído!"
+      - name: Instalar PHP e Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer
+
+      - name: Instalar dependências
+        run: composer install
+
+      - name: Executar testes
+        run: vendor/bin/phpunit --testdox
