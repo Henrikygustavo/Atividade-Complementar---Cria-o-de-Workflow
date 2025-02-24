@@ -1,4 +1,4 @@
-name: CI Pipeline PHP
+name: CI Pipeline
 
 on:
   push:
@@ -12,33 +12,35 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do código
+      - name: Checkout código
         uses: actions/checkout@v3
 
-      - name: Instalar PHP e Composer
-        uses: shivammathur/setup-php@v2
+      - name: Configurar Python
+        uses: actions/setup-python@v3
         with:
-          php-version: "8.1"
-          tools: composer
+          python-version: "3.9"
 
       - name: Instalar dependências
-        run: composer install
+        run: pip install -r requirements.txt || true
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do código
+      - name: Checkout código
         uses: actions/checkout@v3
 
-      - name: Instalar PHP e Composer
-        uses: shivammathur/setup-php@v2
+      - name: Configurar Python
+        uses: actions/setup-python@v3
         with:
-          php-version: "8.1"
-          tools: composer
-
-      - name: Instalar dependências
-        run: composer install
+          python-version: "3.9"
 
       - name: Executar testes
-        run: vendor/bin/phpunit --testdox
+        run: python -m unittest discover
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simular deploy
+        run: echo "Simulando deploy..."
